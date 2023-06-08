@@ -1,3 +1,6 @@
+
+-- inserting data into employee table
+
 INSERT INTO employee (name, age, department)
 VALUES
   ('John', 25, 'IT'),
