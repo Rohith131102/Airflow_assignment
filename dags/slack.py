@@ -1,7 +1,6 @@
+#importing required libraries
 from airflow import DAG
 from datetime import datetime, timedelta
-#importing SlackWebhookHook used to for interacting with incoming webhooks
-from airflow.providers.slack.hooks.slack_webhook import SlackWebhookHook
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.trigger_rule import TriggerRule
 from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
@@ -15,6 +14,7 @@ SLACK_CONN_ID = "SLACK_CONN_ID"
 webhook_token = BaseHook.get_connection(SLACK_CONN_ID).password
 channel = BaseHook.get_connection(SLACK_CONN_ID).login
 
+#default_args
 default_args = {
     'owner': 'airflow',
     'start_date': days_ago(1),
@@ -34,7 +34,7 @@ with DAG(
     schedule="@daily",
     catchup=False,
 ) as dag:
-    # Creating a task fails some time
+    # Creating a task which passes or fails randomly
     task1 = PythonOperator(
         task_id='random_result',
         python_callable=random_pass_fail,
@@ -61,5 +61,5 @@ with DAG(
         trigger_rule=TriggerRule.ALL_FAILED
     )
 
-
+    #order of execution of tasks
     task1 >> [task2,task3]
